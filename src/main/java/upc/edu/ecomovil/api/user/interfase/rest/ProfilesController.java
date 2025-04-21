@@ -1,13 +1,20 @@
 package upc.edu.ecomovil.api.user.interfase.rest;
+import lombok.extern.slf4j.Slf4j;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
+import upc.edu.ecomovil.api.iam.domain.model.aggregates.User;
+import upc.edu.ecomovil.api.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import upc.edu.ecomovil.api.user.domain.model.queries.GetAllProfilesQuery;
 import upc.edu.ecomovil.api.user.domain.model.queries.GetProfileByIdQuery;
 import upc.edu.ecomovil.api.user.domain.services.ProfileCommandService;
@@ -17,30 +24,44 @@ import upc.edu.ecomovil.api.user.interfase.rest.resources.ProfileResource;
 import upc.edu.ecomovil.api.user.interfase.rest.transform.CreateProfileCommandFromResourceAssembler;
 import upc.edu.ecomovil.api.user.interfase.rest.transform.ProfileResourceFromEntityAssembler;
 
+
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 @RequestMapping(value = "/api/v1/profiles", produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "Profiles", description = "Profile Management Endpoints")
 public class ProfilesController {
     private final ProfileQueryService profileQueryService;
     private final ProfileCommandService profileCommandService;
+    private final UserRepository userRepository;
 
-    public ProfilesController(ProfileQueryService profileQueryService, ProfileCommandService profileCommandService) {
+
+    public ProfilesController(ProfileQueryService profileQueryService, ProfileCommandService profileCommandService, UserRepository userRepository) {
         this.profileQueryService = profileQueryService;
         this.profileCommandService = profileCommandService;
+        this.userRepository = userRepository;
     }
 
+
     @PostMapping
-    public ResponseEntity<ProfileResource> createProfile(@RequestBody CreateProfileResource resource) {
-        var createProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource);
+    public ResponseEntity<ProfileResource> createProfile(@RequestBody CreateProfileResource resource,
+                                                         @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        log.info("Authenticated as: {}", username);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        var createProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource, user);
         var profile = profileCommandService.handle(createProfileCommand);
+
         if (profile.isEmpty()) return ResponseEntity.badRequest().build();
+
         var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
         return new ResponseEntity<>(profileResource, HttpStatus.CREATED);
     }
-
 
     @Operation(
             summary = "Get a profile by ID",
@@ -69,7 +90,12 @@ public class ProfilesController {
 
     @PutMapping("/id/{profileId}")
     public ResponseEntity<ProfileResource> updateProfile(@PathVariable Long profileId, @RequestBody CreateProfileResource resource) {
-        var updateProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        var updateProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource, user);
         var profile = profileCommandService.handle(updateProfileCommand);
         if (profile.isEmpty()) return ResponseEntity.badRequest().build();
         var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());

@@ -1,6 +1,7 @@
 package upc.edu.ecomovil.api.user.domain.model.entities;
 
 import jakarta.persistence.*;
+import upc.edu.ecomovil.api.iam.domain.model.aggregates.User;
 import upc.edu.ecomovil.api.plan2.domain.model.aggregates.Plan2;
 import upc.edu.ecomovil.api.user.domain.model.aggregates.Profile;
 import upc.edu.ecomovil.api.user.domain.model.commands.CreateStudentCommand;
@@ -17,8 +18,8 @@ public class Student extends Profile {
     @Embedded
     private RucNumber ruc;
 
-    public Student(String firstName, String lastName, String email, String phoneNumber, String ruc) {
-        super(firstName, lastName, email, phoneNumber);
+    public Student(User user, String firstName, String lastName, String email, String phoneNumber, String ruc) {
+        super(user, firstName, lastName, email, phoneNumber);
         this.ruc = new RucNumber(ruc);
     }
 
@@ -27,7 +28,7 @@ public class Student extends Profile {
     }
 
     public Student(CreateStudentCommand command, Plan2 plan) {
-        super(command.firstName(), command.lastName(), command.email(), command.phoneNumber());
+        super(command.user(), command.firstName(), command.lastName(), command.email(), command.phoneNumber());
         this.ruc = new RucNumber(command.rucNumber());
         this.plan = plan;
     }

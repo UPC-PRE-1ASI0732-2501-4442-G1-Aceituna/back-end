@@ -1,8 +1,7 @@
 package upc.edu.ecomovil.api.user.domain.model.aggregates;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import upc.edu.ecomovil.api.iam.domain.model.aggregates.User;
 import upc.edu.ecomovil.api.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import upc.edu.ecomovil.api.user.domain.model.commands.CreateProfileCommand;
 import upc.edu.ecomovil.api.user.domain.model.valueobjects.EmailAddress;
@@ -11,6 +10,13 @@ import upc.edu.ecomovil.api.user.domain.model.valueobjects.PhoneNumber;
 
 @Entity
 public class Profile extends AuditableAbstractAggregateRoot<Profile> {
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id") // Usa el ID de User como FK y PK
+    private User user;
+
+
 
     @Embedded
     private PersonName name;
@@ -21,7 +27,8 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     @Embedded
     private PhoneNumber phoneNumber;
 
-    public Profile(String firstName, String lastName, String email, String phoneNumber) {
+    public Profile(User user, String firstName, String lastName, String email, String phoneNumber) {
+        this.user = user;
         this.name = new PersonName(firstName, lastName);
         this.email = new EmailAddress(email);
         this.phoneNumber = new PhoneNumber(phoneNumber);
@@ -29,6 +36,7 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     }
 
     public Profile(CreateProfileCommand command){
+        this.user = command.user();
         this.name = new PersonName(command.firstName(), command.lastName());
         this.email = new EmailAddress(command.email());
         this.phoneNumber = new PhoneNumber(command.phoneNumber());

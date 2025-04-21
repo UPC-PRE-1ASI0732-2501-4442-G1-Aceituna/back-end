@@ -7,7 +7,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import upc.edu.ecomovil.api.iam.domain.model.aggregates.User;
+import upc.edu.ecomovil.api.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import upc.edu.ecomovil.api.user.domain.model.queries.Student.GetAllStudentQuery;
 import upc.edu.ecomovil.api.user.domain.model.queries.Student.GetStudentByIdQuery;
 import upc.edu.ecomovil.api.user.domain.services.StudentCommandService;
@@ -26,10 +30,12 @@ import java.util.stream.Collectors;
 public class StudentController {
     private final StudentQueryService studentQueryService;
     private final StudentCommandService studentCommandService;
+    private final UserRepository userRepository;
 
-    public StudentController(StudentQueryService studentQueryService, StudentCommandService studentCommandService) {
+    public StudentController(StudentQueryService studentQueryService, StudentCommandService studentCommandService , UserRepository userRepository) {
         this.studentQueryService = studentQueryService;
         this.studentCommandService = studentCommandService;
+        this.userRepository = userRepository;
     }
 
 
@@ -42,7 +48,12 @@ public class StudentController {
     })
     @PostMapping
     public ResponseEntity<StudentResource> createProfile(@RequestBody CreateStudentResource resource) {
-        var createStudentCommand = CreateStudentCommandFromResourceAssembler.toCommandFromResource(resource);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+        var createStudentCommand = CreateStudentCommandFromResourceAssembler.toCommandFromResource(resource, user );
         var student = studentCommandService.handle(createStudentCommand);
         if (student.isEmpty()) return ResponseEntity.badRequest().build();
         var studentResource = StudentResourceFromEntityAssembler.toResourceFromEntity(student.get());
@@ -77,7 +88,12 @@ public class StudentController {
 
     @PutMapping("/id/{id}")
     public ResponseEntity<StudentResource> updateProfile(@PathVariable Long id, @RequestBody CreateStudentResource resource) {
-        var createStudentCommand = CreateStudentCommandFromResourceAssembler.toCommandFromResource(resource);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        var createStudentCommand = CreateStudentCommandFromResourceAssembler.toCommandFromResource(resource, user);
         var student = studentCommandService.handle(createStudentCommand);
         if (student.isEmpty()) return ResponseEntity.badRequest().build();
         var studentResource = StudentResourceFromEntityAssembler.toResourceFromEntity(student.get());
