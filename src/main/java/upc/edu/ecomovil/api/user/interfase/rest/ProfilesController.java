@@ -74,12 +74,19 @@ public class ProfilesController {
             @ApiResponse(responseCode = "200", description = "Profile found"),
             @ApiResponse(responseCode = "404", description = "Profile not found")
     })
-    @GetMapping("/{profileId}")
-    public ResponseEntity<ProfileResource> getProfileById(@PathVariable Long profileId) {
-        var getProfileByIdQuery = new GetProfileByIdQuery(profileId);
-        var profile = profileQueryService.handle(getProfileByIdQuery);
-        if (profile.isEmpty()) return ResponseEntity.notFound().build();
-        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+
+    @GetMapping("/me")
+    public ResponseEntity<ProfileResource> getMyProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        var profileOptional = profileRepository.findById(user.getId());
+        if (profileOptional.isEmpty()) return ResponseEntity.notFound().build();
+
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profileOptional.get());
         return ResponseEntity.ok(profileResource);
     }
 

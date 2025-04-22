@@ -93,10 +93,16 @@ public class StudentController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
+        // 🚨 Aquí debes verificar que ya existe el perfil
+        var existingProfile = studentQueryService.handle(new GetStudentByIdQuery(id));
+        if (existingProfile.isEmpty()) return ResponseEntity.notFound().build();
+
+        // 👉 Ahora sí actualizamos con la info nueva
         var createStudentCommand = CreateStudentCommandFromResourceAssembler.toCommandFromResource(resource, user);
-        var student = studentCommandService.handle(createStudentCommand);
-        if (student.isEmpty()) return ResponseEntity.badRequest().build();
-        var studentResource = StudentResourceFromEntityAssembler.toResourceFromEntity(student.get());
+        var updatedStudent = studentCommandService.handle(createStudentCommand);
+        if (updatedStudent.isEmpty()) return ResponseEntity.badRequest().build();
+
+        var studentResource = StudentResourceFromEntityAssembler.toResourceFromEntity(updatedStudent.get());
         return ResponseEntity.ok(studentResource);
     }
 }

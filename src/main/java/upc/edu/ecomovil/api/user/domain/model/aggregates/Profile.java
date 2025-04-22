@@ -1,6 +1,7 @@
 package upc.edu.ecomovil.api.user.domain.model.aggregates;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import upc.edu.ecomovil.api.iam.domain.model.aggregates.User;
 import upc.edu.ecomovil.api.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 import upc.edu.ecomovil.api.user.domain.model.commands.CreateProfileCommand;
@@ -8,8 +9,12 @@ import upc.edu.ecomovil.api.user.domain.model.valueobjects.EmailAddress;
 import upc.edu.ecomovil.api.user.domain.model.valueobjects.PersonName;
 import upc.edu.ecomovil.api.user.domain.model.valueobjects.PhoneNumber;
 
+@Getter
 @Entity
-public class Profile extends AuditableAbstractAggregateRoot<Profile> {
+public class Profile {
+
+    @Id // 👈 Añades esto para sobrescribir la estrategia
+    private Long id;
 
     @OneToOne
     @MapsId
