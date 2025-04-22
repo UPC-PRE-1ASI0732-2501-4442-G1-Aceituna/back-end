@@ -15,10 +15,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import upc.edu.ecomovil.api.iam.domain.model.aggregates.User;
 import upc.edu.ecomovil.api.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import upc.edu.ecomovil.api.user.domain.model.aggregates.Profile;
 import upc.edu.ecomovil.api.user.domain.model.queries.GetAllProfilesQuery;
 import upc.edu.ecomovil.api.user.domain.model.queries.GetProfileByIdQuery;
 import upc.edu.ecomovil.api.user.domain.services.ProfileCommandService;
 import upc.edu.ecomovil.api.user.domain.services.ProfileQueryService;
+import upc.edu.ecomovil.api.user.infrastructure.persistence.jpa.repositories.ProfileRepository;
 import upc.edu.ecomovil.api.user.interfase.rest.resources.CreateProfileResource;
 import upc.edu.ecomovil.api.user.interfase.rest.resources.ProfileResource;
 import upc.edu.ecomovil.api.user.interfase.rest.transform.CreateProfileCommandFromResourceAssembler;
@@ -36,12 +38,14 @@ public class ProfilesController {
     private final ProfileQueryService profileQueryService;
     private final ProfileCommandService profileCommandService;
     private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
 
 
-    public ProfilesController(ProfileQueryService profileQueryService, ProfileCommandService profileCommandService, UserRepository userRepository) {
+    public ProfilesController(ProfileQueryService profileQueryService, ProfileCommandService profileCommandService, UserRepository userRepository, ProfileRepository profileRepository) {
         this.profileQueryService = profileQueryService;
         this.profileCommandService = profileCommandService;
         this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
     }
 
 
@@ -88,17 +92,26 @@ public class ProfilesController {
         return ResponseEntity.ok(profileResources);
     }
 
-    @PutMapping("/id/{profileId}")
-    public ResponseEntity<ProfileResource> updateProfile(@PathVariable Long profileId, @RequestBody CreateProfileResource resource) {
+    @PutMapping
+    public ResponseEntity<ProfileResource> updateProfile(@RequestBody CreateProfileResource resource) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
-        var updateProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource, user);
-        var profile = profileCommandService.handle(updateProfileCommand);
-        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
-        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+        // Carga el perfil del user autenticado
+        var profileOptional = profileRepository.findById(user.getId());
+        if (profileOptional.isEmpty()) return ResponseEntity.notFound().build();
+
+        Profile profile = profileOptional.get();
+        profile.updateName(resource.firstName(), resource.lastName());
+        profile.updateEmail(resource.email());
+        profile.updatePhoneNumber(resource.phoneNumber());
+
+        var savedProfile = profileRepository.save(profile);
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(savedProfile);
+
         return ResponseEntity.ok(profileResource);
     }
 }
