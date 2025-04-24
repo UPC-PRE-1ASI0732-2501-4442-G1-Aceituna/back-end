@@ -22,7 +22,11 @@ public class VehicleCommandServiceImpl implements VehicleCommandService {
     @Override
     public Optional<Vehicle> handle(CreateVehicleCommand command) {
 
-        var vehicle = new Vehicle(command);
+        // Aquí va lo que te mencioné 👇
+        var owner = externalStudentService.fetchStudentById(command.profileId())
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        var vehicle = new Vehicle(command, owner);
         vehicleRepository.save(vehicle);
         return Optional.of(vehicle);
     }

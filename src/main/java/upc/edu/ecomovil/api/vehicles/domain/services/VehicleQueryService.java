@@ -1,6 +1,7 @@
 package upc.edu.ecomovil.api.vehicles.domain.services;
 
 import upc.edu.ecomovil.api.vehicles.domain.model.aggregates.Vehicle;
+import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetAllVehiclesByOwnerId;
 import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetAllVehiclesByTypeQuery;
 import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetAllVehiclesQuery;
 import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetVehicleByIdQuery;
@@ -17,4 +18,5 @@ public interface VehicleQueryService {
     List<Vehicle> handle(GetAllVehiclesQuery query);
     List<Vehicle> handle(GetAllVehiclesByTypeQuery query);
 
+    List<Vehicle> handle(GetAllVehiclesByOwnerId query);
 }

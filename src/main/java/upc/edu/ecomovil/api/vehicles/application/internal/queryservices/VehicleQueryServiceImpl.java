@@ -2,6 +2,7 @@ package upc.edu.ecomovil.api.vehicles.application.internal.queryservices;
 
 import org.springframework.stereotype.Service;
 import upc.edu.ecomovil.api.vehicles.domain.model.aggregates.Vehicle;
+import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetAllVehiclesByOwnerId;
 import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetAllVehiclesByTypeQuery;
 import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetAllVehiclesQuery;
 import upc.edu.ecomovil.api.vehicles.domain.model.queries.GetVehicleByIdQuery;
@@ -32,6 +33,11 @@ public class VehicleQueryServiceImpl implements VehicleQueryService {
     @Override
     public List<Vehicle> handle(GetAllVehiclesByTypeQuery query) {
         return vehicleRepository.findAllByDetails_Type(query.type());
+    }
+
+    @Override
+    public List<Vehicle> handle(GetAllVehiclesByOwnerId query) {
+        return vehicleRepository.findAllByOwnerId(query.ownerId());
     }
 }
 
