@@ -5,7 +5,7 @@ import upc.edu.ecomovil.api.vehicles.interfase.rest.resources.VehicleResource;
 
 public class VehicleResourceFromEntityAssembler {
     public static VehicleResource toResourceFromEntity(Vehicle entity){
-        return new VehicleResource(entity.getType(), entity.getName(), entity.getYear(), entity.getReview(), entity.getPriceRent(), entity.getPriceSell(), entity.getIsAvailable(), entity.getImageUrl(), entity.getLat(), entity.getLng(), entity.getDescription());
+        return new VehicleResource(entity.getId(), entity.getType(), entity.getName(), entity.getYear(), entity.getReview(), entity.getPriceRent(), entity.getPriceSell(), entity.getIsAvailable(), entity.getImageUrl(), entity.getLat(), entity.getLng(), entity.getDescription());
     }
 }
 

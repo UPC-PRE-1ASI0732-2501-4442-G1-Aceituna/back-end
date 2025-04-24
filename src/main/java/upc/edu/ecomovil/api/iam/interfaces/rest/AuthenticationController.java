@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import upc.edu.ecomovil.api.plan2.infraestructure.persistence.jpa.repositories.Plan2Repository;
 import upc.edu.ecomovil.api.user.domain.model.aggregates.Profile;
 import upc.edu.ecomovil.api.user.infrastructure.persistence.jpa.repositories.ProfileRepository;
 
@@ -37,10 +38,12 @@ import upc.edu.ecomovil.api.user.infrastructure.persistence.jpa.repositories.Pro
 public class AuthenticationController {
     private final UserCommandService userCommandService;
     private final ProfileRepository profileRepository;
+    private final Plan2Repository plan2Repository;
 
-    public AuthenticationController(UserCommandService userCommandService, ProfileRepository profileRepository) {
+    public AuthenticationController(UserCommandService userCommandService, ProfileRepository profileRepository, Plan2Repository plan2Repository) {
         this.userCommandService = userCommandService;
         this.profileRepository = profileRepository;
+        this.plan2Repository = plan2Repository;
     }
 
     /**
@@ -71,16 +74,19 @@ public class AuthenticationController {
 
         if (user.isEmpty()) return ResponseEntity.badRequest().build();
 
-        if (profileRepository.findById(user.get().getId()).isEmpty()) {
-            var profile = new Profile(
-                    user.get(),
-                    signUpResource.username(),
-                    signUpResource.username(),
-                    signUpResource.email(),
-                    "000000000"
-            );
-            profileRepository.save(profile);
-        }
+        var defaultPlan = plan2Repository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Plan with ID 1 not found"));
+
+        var profile = new Profile(
+                user.get(),
+                signUpResource.username(),
+                signUpResource.username(),
+                signUpResource.email(),
+                "000000000",
+                "00000000000"
+        );
+        profile.setPlan(defaultPlan); // 👈 Asignamos el plan
+        profileRepository.save(profile);
 
 
         var userResource = UserResourceFromEntityAssembler.toResourceFromEntity(user.get());

@@ -7,7 +7,6 @@ import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import upc.edu.ecomovil.api.plan2.domain.model.aggregates.Plan2;
 import upc.edu.ecomovil.api.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import upc.edu.ecomovil.api.user.domain.model.entities.Student;
 import upc.edu.ecomovil.api.vehicles.domain.model.commands.CreateVehicleCommand;
 import upc.edu.ecomovil.api.vehicles.domain.model.valueobjects.Details;
 import upc.edu.ecomovil.api.vehicles.domain.model.valueobjects.Prices;

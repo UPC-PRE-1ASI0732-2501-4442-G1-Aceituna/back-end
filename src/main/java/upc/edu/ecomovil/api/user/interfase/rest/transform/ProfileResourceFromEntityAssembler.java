@@ -5,6 +5,6 @@ import upc.edu.ecomovil.api.user.interfase.rest.resources.ProfileResource;
 
 public class ProfileResourceFromEntityAssembler {
     public static ProfileResource toResourceFromEntity(Profile entity){
-        return new ProfileResource(entity.getId(),  entity.getFullName(),entity.getEmail(), entity.getPhoneNumber());
+        return new ProfileResource(entity.getId(),  entity.getFullName(),entity.getEmail(), entity.getPhoneNumber(), entity.getRuc(), entity.getPlan().getId());
     }
 }

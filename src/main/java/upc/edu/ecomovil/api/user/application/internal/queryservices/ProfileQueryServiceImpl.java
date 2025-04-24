@@ -5,6 +5,7 @@ import upc.edu.ecomovil.api.user.domain.model.aggregates.Profile;
 import upc.edu.ecomovil.api.user.domain.model.queries.GetAllProfilesQuery;
 import upc.edu.ecomovil.api.user.domain.model.queries.GetProfileByEmailQuery;
 import upc.edu.ecomovil.api.user.domain.model.queries.GetProfileByIdQuery;
+import upc.edu.ecomovil.api.user.domain.model.queries.GetProfileByRucQuery;
 import upc.edu.ecomovil.api.user.domain.services.ProfileQueryService;
 import upc.edu.ecomovil.api.user.infrastructure.persistence.jpa.repositories.ProfileRepository;
 
@@ -32,5 +33,10 @@ public class ProfileQueryServiceImpl implements ProfileQueryService {
     @Override
     public Optional<Profile> handle(GetProfileByEmailQuery query) {
         return profileRepository.findByEmail(query.email());
+    }
+
+    @Override
+    public Optional<Profile> handle(GetProfileByRucQuery query) {
+        return profileRepository.findByRuc(query.ruc());
     }
 }

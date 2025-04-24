@@ -2,23 +2,23 @@ package upc.edu.ecomovil.api.vehicles.application.internal.outboundservices.acl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import upc.edu.ecomovil.api.user.domain.model.entities.Student;
-import upc.edu.ecomovil.api.user.interfase.rest.acl.StudentsContextFacade;
+import upc.edu.ecomovil.api.user.domain.model.aggregates.Profile;
+import upc.edu.ecomovil.api.user.interfase.rest.acl.ProfilesContextFacade2;
 
 import java.util.Optional;
 
 @Service
 public class ExternalStudentService {
-    private final StudentsContextFacade studentsContextFacade;
+    private final ProfilesContextFacade2 studentsContextFacade;
 
     @Autowired
-    public ExternalStudentService(StudentsContextFacade studentsContextFacade) {
+    public ExternalStudentService(ProfilesContextFacade2 studentsContextFacade) {
         this.studentsContextFacade = studentsContextFacade;
     }
 
-    public Optional<Student> fetchStudentById(Long id) {
+    public Optional<Profile> fetchStudentById(Long id) {
         // Usar StudentsContextFacade para obtener el estudiante por ID
-        return studentsContextFacade.getStudentById(id);
+        return studentsContextFacade.getProfileById(id);
     }
 }
 
