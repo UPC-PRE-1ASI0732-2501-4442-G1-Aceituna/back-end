@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     // Clonación del repositorio con credenciales si es necesario
-                    git credentialsId: 'github-credentials', url: "${GIT_REPO_URL}", branch: "${GIT_BRANCH}"
+                    git credentialsId: 'github-credentials', url: 'https://github.com/UPC-PRE-1ASI0732-2501-4442-G1-Aceituna/back-end'
                 }
             }
         }
