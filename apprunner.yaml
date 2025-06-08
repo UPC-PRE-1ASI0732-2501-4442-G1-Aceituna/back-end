@@ -3,10 +3,8 @@ runtime: docker
 build:
   commands:
     build:
-      - echo "Building the application with Docker"
+      - echo "Building Docker image"
 run:
-  runtime-version: latest
-  command: java -jar target/api-0.0.1-SNAPSHOT.jar
   network:
     port: 8080
     env-vars:
