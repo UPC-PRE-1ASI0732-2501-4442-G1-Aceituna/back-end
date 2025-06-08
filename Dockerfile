@@ -24,4 +24,13 @@ EXPOSE 8080
 
 ENV SPRING_PROFILES_ACTIVE=prod
 
-CMD ["java", "-jar", "app.jar"]
+# Optimizaciones de JVM para startup más rápido
+CMD ["java", \
+    "-Xms512m", \
+    "-Xmx1024m", \
+    "-XX:+UseG1GC", \
+    "-XX:+UseStringDeduplication", \
+    "-XX:+OptimizeStringConcat", \
+    "-Dspring.jmx.enabled=false", \
+    "-Dspring.main.lazy-initialization=false", \
+    "-jar", "app.jar"]

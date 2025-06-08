@@ -42,14 +42,14 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return path.startsWith("/actuator/") || 
-               path.equals("/api/v1/health") ||
-               path.startsWith("/api/v1/authentication/") ||
-               path.startsWith("/v3/api-docs/") ||
-               path.equals("/swagger-ui.html") ||
-               path.startsWith("/swagger-ui/") ||
-               path.startsWith("/swagger-resources/") ||
-               path.startsWith("/webjars/");
+        return path.startsWith("/actuator/") ||
+                path.equals("/api/v1/health") ||
+                path.startsWith("/api/v1/authentication/") ||
+                path.startsWith("/v3/api-docs/") ||
+                path.equals("/swagger-ui.html") ||
+                path.startsWith("/swagger-ui/") ||
+                path.startsWith("/swagger-resources/") ||
+                path.startsWith("/webjars/");
     }
 
     /**

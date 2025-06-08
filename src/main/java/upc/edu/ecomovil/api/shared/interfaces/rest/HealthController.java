@@ -23,9 +23,8 @@ public class HealthController {
     @GetMapping("/health")
     public ResponseEntity<Map<String, String>> health() {
         return ResponseEntity.ok(Map.of(
-            "status", "UP",
-            "application", "EcoMovil API",
-            "version", "1.0.0"
-        ));
+                "status", "UP",
+                "application", "EcoMovil API",
+                "version", "1.0.0"));
     }
 }
