@@ -88,7 +88,52 @@ aws apprunner create-service \
 
 2. **Subnet Groups**: Verificar que RDS esté en subnets públicas o configurar VPC adecuadamente
 
-### 5. Verificar el despliegue
+### 5. Configurar Health Check
+
+**Importante**: Configurar el health check correctamente en App Runner:
+
+**Opción A: Usando la consola web de AWS App Runner**
+1. En la sección "Health check", configurar:
+   - **Health check path**: `/api/v1/health`
+   - **Interval**: 20 seconds
+   - **Timeout**: 5 seconds
+   - **Healthy threshold**: 3
+   - **Unhealthy threshold**: 5
+
+**Opción B: Usando AWS CLI**
+```bash
+# Al crear el servicio, añadir la configuración del health check
+aws apprunner create-service \
+  --service-name "ecomovil-api" \
+  --source-configuration '{
+    "ImageRepository": {
+      "ImageIdentifier": "tu-repo/ecomovil-api:latest",
+      "ImageConfiguration": {
+        "Port": "8080",
+        "RuntimeEnvironmentVariables": {
+          "SPRING_DATASOURCE_URL": "jdbc:mysql://ecomovil.cqzckuuccbtd.us-east-1.rds.amazonaws.com:3306/ecomovilaceituna?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC",
+          "SPRING_DATASOURCE_USERNAME": "ecomovilaceituna",
+          "SPRING_DATASOURCE_PASSWORD": "123Fer53"
+        }
+      }
+    },
+    "AutoDeploymentsEnabled": true
+  }' \
+  --instance-configuration '{
+    "Cpu": "1 vCPU",
+    "Memory": "2 GB"
+  }' \
+  --health-check-configuration '{
+    "Protocol": "HTTP",
+    "Path": "/api/v1/health",
+    "Interval": 20,
+    "Timeout": 5,
+    "HealthyThreshold": 3,
+    "UnhealthyThreshold": 5
+  }'
+```
+
+### 6. Verificar el despliegue
 
 Una vez creado el servicio:
 

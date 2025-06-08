@@ -19,16 +19,17 @@ import java.io.IOException;
 /**
  * Bearer Authorization Request Filter.
  * <p>
- * This class is responsible for filtering requests and setting the user authentication.
+ * This class is responsible for filtering requests and setting the user
+ * authentication.
  * It extends the OncePerRequestFilter class.
  * </p>
+ * 
  * @see OncePerRequestFilter
  */
 public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BearerAuthorizationRequestFilter.class);
     private final BearerTokenService tokenService;
-
 
     @Qualifier("defaultUserDetailsService")
     private final UserDetailsService userDetailsService;
@@ -38,21 +39,38 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return path.startsWith("/actuator/") || 
+               path.equals("/api/v1/health") ||
+               path.startsWith("/api/v1/authentication/") ||
+               path.startsWith("/v3/api-docs/") ||
+               path.equals("/swagger-ui.html") ||
+               path.startsWith("/swagger-ui/") ||
+               path.startsWith("/swagger-resources/") ||
+               path.startsWith("/webjars/");
+    }
+
     /**
-     * This method is responsible for filtering requests and setting the user authentication.
-     * @param request The request object.
-     * @param response The response object.
+     * This method is responsible for filtering requests and setting the user
+     * authentication.
+     * 
+     * @param request     The request object.
+     * @param response    The response object.
      * @param filterChain The filter chain object.
      */
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = tokenService.getBearerTokenFrom(request);
             LOGGER.info("Token: {}", token);
             if (token != null && tokenService.validateToken(token)) {
                 String username = tokenService.getUsernameFromToken(token);
                 var userDetails = userDetailsService.loadUserByUsername(username);
-                SecurityContextHolder.getContext().setAuthentication(UsernamePasswordAuthenticationTokenBuilder.build(userDetails, request));
+                SecurityContextHolder.getContext()
+                        .setAuthentication(UsernamePasswordAuthenticationTokenBuilder.build(userDetails, request));
             } else {
                 LOGGER.info("Token is not valid");
             }

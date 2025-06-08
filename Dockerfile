@@ -1,31 +1,27 @@
-# Usar OpenJDK 21 como imagen base
-FROM openjdk:21-jdk-slim
+# Etapa 1: Build con Maven
+FROM eclipse-temurin:21-jdk as builder
 
-# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar el archivo pom.xml y el wrapper de Maven
 COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
-
-# Dar permisos de ejecución al wrapper de Maven
 RUN chmod +x mvnw
-
-# Descargar dependencias (mejora el cache de Docker)
 RUN ./mvnw dependency:go-offline -B
 
-# Copiar el código fuente
 COPY src src
-
-# Construir la aplicación
 RUN ./mvnw clean package -DskipTests
 
-# Exponer el puerto 8080
+# Etapa 2: Imagen liviana solo con el .jar
+FROM eclipse-temurin:21-jdk-jammy
+
+WORKDIR /app
+
+# Copiar solo el .jar de la etapa anterior
+COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
 
-# Variables de entorno para producción
 ENV SPRING_PROFILES_ACTIVE=prod
 
-# Comando para ejecutar la aplicación
-CMD ["java", "-jar", "target/api-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]
