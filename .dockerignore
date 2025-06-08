@@ -1,0 +1,19 @@
+# Archivos y directorios que Docker debe ignorar
+target/
+.git/
+.gitignore
+README.md
+*.md
+.DS_Store
+.vscode/
+.idea/
+*.iml
+Jenkinsfile
+
+# Archivos de configuración local
+application-local.properties
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp

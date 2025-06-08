@@ -1,0 +1,15 @@
+version: 1.0
+runtime: docker
+build:
+  commands:
+    build:
+      - echo "Building the application with Docker"
+run:
+  runtime-version: latest
+  command: java -jar target/api-0.0.1-SNAPSHOT.jar
+  network:
+    port: 8080
+    env-vars:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://ecomovil.cqzckuuccbtd.us-east-1.rds.amazonaws.com:3306/ecomovilaceituna?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=ecomovilaceituna
+      - SPRING_DATASOURCE_PASSWORD=123Fer53
