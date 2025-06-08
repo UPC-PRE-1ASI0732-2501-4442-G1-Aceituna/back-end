@@ -3,11 +3,11 @@ runtime: docker
 build:
   commands:
     build:
-      - echo "Building Docker image"
+      - echo "Docker build"
 run:
   network:
     port: 8080
     env-vars:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://ecomovil.cqzckuuccbtd.us-east-1.rds.amazonaws.com:3306/ecomovilaceituna?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=ecomovilaceituna
-      - SPRING_DATASOURCE_PASSWORD=123Fer53
+      SPRING_DATASOURCE_URL: jdbc:mysql://ecomovil.cqzckuuccbtd.us-east-1.rds.amazonaws.com:3306/ecomovilaceituna?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ecomovilaceituna
+      SPRING_DATASOURCE_PASSWORD: 123Fer53
