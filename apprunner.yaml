@@ -1,0 +1,20 @@
+version: 1.0
+runtime: docker
+
+# Health check
+health-check:
+  path: /api/v1/health
+  protocol: HTTP
+  interval-seconds: 30
+  timeout-seconds: 10
+  unhealthy-threshold: 6
+  healthy-threshold: 1
+
+# App port y variables de entorno
+network:
+  port: 8080
+  env-vars:
+    SPRING_PROFILES_ACTIVE: prod
+    SPRING_DATASOURCE_URL: jdbc:mysql://ecomovil.cqzckuuccbtd.us-east-1.rds.amazonaws.com:3306/ecomovilaceituna?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    SPRING_DATASOURCE_USERNAME: ecomovilaceituna
+    SPRING_DATASOURCE_PASSWORD: 123Fer53
