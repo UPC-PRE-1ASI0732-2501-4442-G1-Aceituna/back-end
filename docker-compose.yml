@@ -3,7 +3,10 @@ version: '3.8'
 services:
   # Servicio de la aplicación Spring Boot
   ecomovil-api:
-    build: .
+    build:
+      context: .
+      platforms:
+        - linux/amd64
     container_name: ecomovil-api
     ports:
       - "8080:8080"

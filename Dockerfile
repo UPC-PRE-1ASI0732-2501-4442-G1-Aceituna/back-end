@@ -1,3 +1,7 @@
+# Build instructions:
+# For local development: docker build -t ecomovil-api .
+# For production (AWS/ECS): docker buildx build --platform linux/amd64 -t ecomovil-api:amd64 .
+
 # Etapa 1: Build con Maven
 FROM eclipse-temurin:21-jdk as builder
 
@@ -22,6 +26,7 @@ COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 
+# Default to production profile, can be overridden
 ENV SPRING_PROFILES_ACTIVE=prod
 
 # Optimizaciones de JVM para startup más rápido

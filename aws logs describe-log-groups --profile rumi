@@ -1,0 +1,100 @@
+{
+    "tasks": [
+        {
+            "attachments": [
+                {
+                    "id": "11f91c17-21d3-4804-983c-ffb05bab760e",
+                    "type": "ElasticNetworkInterface",
+                    "status": "ATTACHED",
+                    "details": [
+                        {
+                            "name": "subnetId",
+                            "value": "subnet-0a826c3eb7b23937e"
+                        },
+                        {
+                            "name": "networkInterfaceId",
+                            "value": "eni-0725c23dd58f505cb"
+                        },
+                        {
+                            "name": "macAddress",
+                            "value": "0e:74:b7:8a:27:5f"
+                        },
+                        {
+                            "name": "privateDnsName",
+                            "value": "ip-172-31-41-188.ec2.internal"
+                        },
+                        {
+                            "name": "privateIPv4Address",
+                            "value": "172.31.41.188"
+                        }
+                    ]
+                }
+            ],
+            "attributes": [
+                {
+                    "name": "ecs.cpu-architecture",
+                    "value": "x86_64"
+                }
+            ],
+            "availabilityZone": "us-east-1b",
+            "capacityProviderName": "FARGATE",
+            "clusterArn": "arn:aws:ecs:us-east-1:184642059039:cluster/ultimate-hippopotamus-mifrfd",
+            "connectivity": "CONNECTED",
+            "connectivityAt": "2025-06-08T17:52:32.646000-05:00",
+            "containers": [
+                {
+                    "containerArn": "arn:aws:ecs:us-east-1:184642059039:container/ultimate-hippopotamus-mifrfd/0959c80ec0704d4fba22e773a522c274/bf9fad5d-e7ea-4b66-84b5-0eddd2ce7cd2",
+                    "taskArn": "arn:aws:ecs:us-east-1:184642059039:task/ultimate-hippopotamus-mifrfd/0959c80ec0704d4fba22e773a522c274",
+                    "name": "ecomovil-api",
+                    "image": "184642059039.dkr.ecr.us-east-1.amazonaws.com/david/emo:amd64",
+                    "imageDigest": "sha256:edf54bcd1e7771f1872a1a8116d50aa4d1d417551cf28c414b1a7f9ff5172533",
+                    "runtimeId": "0959c80ec0704d4fba22e773a522c274-1130376424",
+                    "lastStatus": "RUNNING",
+                    "networkBindings": [],
+                    "networkInterfaces": [
+                        {
+                            "attachmentId": "11f91c17-21d3-4804-983c-ffb05bab760e",
+                            "privateIpv4Address": "172.31.41.188"
+                        }
+                    ],
+                    "healthStatus": "UNKNOWN",
+                    "cpu": "0"
+                }
+            ],
+            "cpu": "512",
+            "createdAt": "2025-06-08T17:52:29.248000-05:00",
+            "desiredStatus": "RUNNING",
+            "enableExecuteCommand": false,
+            "group": "service:2ecomovil-service-2q2sgtae",
+            "healthStatus": "UNKNOWN",
+            "lastStatus": "RUNNING",
+            "launchType": "FARGATE",
+            "memory": "3072",
+            "overrides": {
+                "containerOverrides": [
+                    {
+                        "name": "ecomovil-api"
+                    }
+                ],
+                "inferenceAcceleratorOverrides": []
+            },
+            "platformVersion": "1.4.0",
+            "platformFamily": "Linux",
+            "pullStartedAt": "2025-06-08T17:52:43.994000-05:00",
+            "pullStoppedAt": "2025-06-08T17:52:53.472000-05:00",
+            "startedAt": "2025-06-08T17:52:55.191000-05:00",
+            "startedBy": "ecs-svc/7115684015906770811",
+            "tags": [],
+            "taskArn": "arn:aws:ecs:us-east-1:184642059039:task/ultimate-hippopotamus-mifrfd/0959c80ec0704d4fba22e773a522c274",
+            "taskDefinitionArn": "arn:aws:ecs:us-east-1:184642059039:task-definition/2ecomovil:1",
+            "version": 4,
+            "ephemeralStorage": {
+                "sizeInGiB": 20
+            },
+            "fargateEphemeralStorage": {
+                "sizeInGiB": 20
+            }
+        }
+    ],
+    "failures": []
+}
